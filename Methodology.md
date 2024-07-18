@@ -1,16 +1,52 @@
-### Setup
+### How to get the Google's billling data?
+## 1. Export Cloud Billing data to BigQuery
+Check [this guide](https://cloud.google.com/billing/docs/how-to/export-data-bigquery-setup) for detailed instructions.
 
-**1. Ensure that you have the Google's billing data stored locally on your PC**
-If you do not know how to do it,  check ?????
-**2. Configure environmental variables  in api/configue.py**
-You can set the api token for using the ElectricityMap's carbon intesntiy, or set the input/output file path. Y ou can also configure some Google Cloud variables but we suggest not doing that unless you know what you are doing
-**3. Run the Python framework**
+### Required setup steps:
+1. **Create a project** where the Cloud Billing data will be stored, and enable billing on the project (if you have not already done so).
+2. **Configure permissions** on the project and on the Cloud Billing account.
+3. **Enable the BigQuery Data Transfer Service API** (required to export your pricing data).
+4. **Create a BigQuery dataset** in which to store the data.
+5. **Enable Cloud Billing export** of cost data and pricing data to be written into the dataset.
 
-#### How to get the billing data from Google
+### 1.1 Grant roles to accounts
 
-#### How to get the carbon data from Google
+- **Account 1**
+  - **Roles:** `Billing Account Costs Manager`, `Billing Account Administrator`
+  - **Function:** Enable and configure the export of Google Cloud billing usage expense data to BigQuery datasets.
 
-#### How do we use them
+- **Account 2**
+  - **Roles:** `BigQuery User`, `BigQuery Admin` on the target project
+  - **Function:** The `BigQuery User` role is used to access the BigQuery dataset where Cloud Billing data is stored. The `BigQuery Admin` role is used to manage and configure BigQuery datasets and tables.
+
+### 1.2 Select or Create a project
+Google suggests creating a Google Cloud project to contain all of your billing administration needs, as well as the dataset to store the billing data. The Google Cloud project you select to contain your dataset should be linked to the same Cloud Billing account that contains the data that you plan to export to the BigQuery dataset.
+
+### 1.3 Verify that billing is enabled
+Check [this guide](https://cloud.google.com/billing/docs/how-to/modify-project#confirm_billing_is_enabled_on_a_project) to confirm billing is enabled on a project.
+
+### 1.4 Enable the BigQuery Data Transfer Service API
+Follow the instructions [here](https://cloud.google.com/bigquery/docs/enable-transfer-service).
+
+### 1.5 Create a BigQuery dataset
+It is strongly suggested to create the dataset under the specific project which is used to collect all the billing cost data. Remember to choose `multi-region-europe` for the integrity of data, as once you select the region when creating the dataset, you cannot change it later.
+
+Check more details [here](https://cloud.google.com/bigquery/docs/samples/bigquery-create-dataset).
+
+### 1.6 Enable Cloud Billing export to the BigQuery dataset
+Select the detailed usage report when you export, because the EmissionLabeler only supports analyzing detailed usage reports. After several hours, you should see the results in the selected dataset.
+
+## 2. Export the billing data to Google Cloud Storage
+Check [this guide](https://cloud.google.com/bigquery/docs/exporting-data) for instructions.
+
+### Steps:
+1. **Export the billing data** in JSON format.
+2. **Download and store** it on your local PC.
+
+## 3. Configure the file path in `config.py` and analyze your Google Cloud usage data!
+
+Once you have downloaded the billing data, you can configure the file path in `config.py` and start analyzing your Google Cloud usage data.
+
 
 ### Methodology
 

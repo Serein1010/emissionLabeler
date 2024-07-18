@@ -20,7 +20,7 @@ def main(file_path):
                     print(f"Error decoding JSON line: {line}")
                     print(e)
 
-    processor = DataProcessor(json_input, granularity=config.GRANULARITY)
+    processor = DataProcessor(json_input, granularity='Day')
     processor.process()
     output = processor.get_results()
    
