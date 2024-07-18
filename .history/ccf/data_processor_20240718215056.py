@@ -5,7 +5,7 @@ from estimators.ComputeEstimator import ComputeEstimator
 from estimators.MemoryEstimator import MemoryEstimator
 from estimators.NetworkingEstimator import NetworkingEstimator
 from estimators.StorageEstimator import StorageEstimator
-from estimators.EmbodiedEmissionsEstimator import EmbodiedEmissionsEstimator
+from estimators.embodiedEmissionsEstimator import EmbodiedEmissionsEstimator
 from estimators.UnknownEstimator import UnknownEstimator
 from utils.UsageTypeConstants import MEMORY_USAGE_TYPES,UNKNOWN_USAGE_UNITS, UNKNOWN_USAGE_TYPES, UNKNOWN_SERVICE_TYPES, UNSUPPORTED_USAGE_TYPES, COMPUTE_STRING_FORMATS, NETWORKING_STRING_FORMATS
 from utils.helpers import containsAny, startsWith

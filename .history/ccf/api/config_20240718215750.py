@@ -12,6 +12,6 @@ ELECTRICITY_MAP_TOKEN="mH1ux820u6aJMbHz3svz1AD3"
 
 
 # Emission Labeler
-OUTPUT_FILE_PATH='/Users/liruoyao/My CCF/ccf/data/output/test_output.json'
-INPUT_FILE_PATH='/Users/liruoyao/My CCF/ccf/data/test.json'
+OUTPUT_FILE_PATH='/Users/liruoyao/MyCCF/ccf/data/output/test_output.json'
+INPUT_FILE_PATH='/Users/liruoyao/MyCCF/ccf/data/test.json'
 ESTIMATE_GRANULARITY='Day' #Hour 

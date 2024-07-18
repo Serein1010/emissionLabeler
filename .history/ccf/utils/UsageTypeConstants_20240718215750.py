@@ -95,3 +95,11 @@ NETWORKING_STRING_FORMATS = [
     'Download',
 ]
 
+# Constants for grouping query results by date types in GCP queries
+GCP_QUERY_GROUP_BY = {
+    'day': 'DAY',
+    'week': 'ISOWEEK',
+    'month': 'MONTH',
+    'quarter': 'QUARTER',
+    'year': 'YEAR',
+}
