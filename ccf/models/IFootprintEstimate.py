@@ -20,27 +20,18 @@ def setOrAccumulateByServiceAndUsageUnit(unknown_dic, record: UsageRecord, kilow
     serviceName = record.serviceName
     usageUnit = record.usageUnit
     usageAmount = record.usageAmount
-    # # Service doesn't exist: set service and usage unit
-    # if not unknown_dic:
-    #     unknown_dic[serviceName] = {
-    #         usageUnit: {
-    #             'UsageAmount': usageAmount,
-    #             'kilowattHours': kilowattHours
-    #         }
-    #     }
-    #     return
-   # Service exists, but no usage unit for the service: set usage unit for service
+
+    # Service exists in unknown_dic, but no usage unit for the service: set usage unit for service
     if serviceName in unknown_dic:
         if usageUnit not in unknown_dic[serviceName]:
             unknown_dic[serviceName][usageUnit] = {
                 'UsageAmount': usageAmount,
                 'kilowattHours': kilowattHours
             }
-    # Usage unit exists for service - accumulate
-        else:
+        else: # Usage unit exists for service - accumulate
             unknown_dic[serviceName][usageUnit]['UsageAmount'] += usageAmount
             unknown_dic[serviceName][usageUnit]['kilowattHours'] += kilowattHours
-    else:
+    else: # Service doesn't exist in unknown_dic: set service and usage unit
         unknown_dic[serviceName] = {
             usageUnit: {
                 'UsageAmount': usageAmount,
@@ -72,12 +63,6 @@ def setOrAccumulateUsageUnitTotals(unknown_dic, record: UsageRecord, kilowattHou
 def estimateCo2(estimatedKilowattHours, region: str, emissionsFactors):
     region = region.upper()
     region = region.replace('-','_')
-    # if region == 'EUROPE_WEST1':
-    #     return estimatedKilowattHours * 57
-    # elif region == 'US_CENTRAL1':
-    #     return estimatedKilowattHours * 456
-    # else:
-    #     return estimatedKilowattHours * 57
     if region not in emissionsFactors:
         return estimatedKilowattHours * emissionsFactors['UNKNOWN']
     else:

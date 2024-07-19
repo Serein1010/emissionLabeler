@@ -8,7 +8,6 @@ class StorageEstimator(IFootprintEstimate):
         self.coefficient = coefficient
 
     def estimate(self, StorageUsage, record:UsageRecord, powerUsageEffectiveness, emissionsFactors, replicationFactor):
-
         estimatedKilowattHours = self.estimate_kilowatt_hours(StorageUsage, powerUsageEffectiveness, replicationFactor)
         estimatedCO2Emissions = estimateCo2(estimatedKilowattHours,record.region, emissionsFactors)
         footprint_estimate = IFootprintEstimate(
@@ -18,11 +17,8 @@ class StorageEstimator(IFootprintEstimate):
             region = record.region,
             usesAverageCPUConstant = False
         )
-
         return footprint_estimate
     
-
-
     def estimate_kilowatt_hours(self, StorageUsage, powerUsageEffectiveness, replicationFactor = 1) -> float:
        
         return ((StorageUsage * self.coefficient * powerUsageEffectiveness * replicationFactor) / 1000)

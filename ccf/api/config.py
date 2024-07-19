@@ -11,7 +11,7 @@ GCP_VCPUS_PER_CLOUD_COMPOSER_ENVIRONMENT=14
 ELECTRICITY_MAP_TOKEN="mH1ux820u6aJMbHz3svz1AD3"
 
 
-# Emission Labeler
+# Emission Labeler File Path
 OUTPUT_FILE_PATH='/Users/liruoyao/My CCF/ccf/data/output/test_output.json'
 INPUT_FILE_PATH='/Users/liruoyao/My CCF/ccf/data/test.json'
 

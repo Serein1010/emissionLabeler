@@ -3,13 +3,6 @@ from utils.GcpFootprintEstimationConstant import GCP_CLOUD_CONSTANTS
 from utils.GCPRegions import GCP_DUAL_REGIONS, GCP_MULTI_REGIONS
 from utils.CloudConstantsType import ReplicationFactorsForService
 
-
-
-
-# 函数定义：每个函数接收usageType和可选的region参数，并根据条件返回适当的复制因子。
-# 字典映射：GCP_REPLICATION_FACTORS_FOR_SERVICES字典将服务名称映射到相应的函数。
-# 调用示例：在实际调用时，可以传递适当的参数。例如，调用get_replication_factor_for_cloud_storage('Dual-region usage type')将返回对应的复制因子。
-
 REPLICATION_FACTORS = GCP_CLOUD_CONSTANTS['REPLICATION_FACTORS']
 
 SERVICES = {

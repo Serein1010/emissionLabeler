@@ -30,13 +30,9 @@ class DataProcessor:
         self.knownresults = defaultdict(list)
         self.granularity = granularity
         self.zoneIntensityFactors: Dict[str, Dict[str, float]] = {} 
-        ### unknown_dic for calculating the ratio of kilowatthours and usageAmount(for different combinations of serviceName and usageUnit)
-        ### then we can use unknown_dic to calculate the unknown usage records
         self.unknown_dic = {}
 
 
-        # self.count_total_record = 0
-        # self.count_unknown_record = 0
     def get_unsupported_records(self):
         for element in self.unsupported_records:
             print(element.serviceName, element.region, element.usageType, element.usageAmount, element.usageUnit)
@@ -50,28 +46,17 @@ class DataProcessor:
     
     def process(self):
         for record in self.records:
-            # ##### 调试用
-            # self.count_total_record = self.count_total_record + 1
-            # #####
             dt = record.usage_start_time
             dateTime = dt.strftime("%Y-%m-%dT%H:%M:%S.00Z")
-            # print(f'datetime in processor {dateTime} type{type(dateTime)}')
             emissionsFactors = getEmissionsFactors.get_emissions_factors(record.region, dateTime, getGcpEmissionsFactors(),  GCP_MAPPED_REGIONS_TO_ELECTRICITY_MAPS_ZONES, self.zoneIntensityFactors) 
-            # print(f'self.zoneIntensityFactors: Dict[str, Dict[str, float]] = {self.zoneIntensityFactors}')
             estimator = self.get_estimator(record, emissionsFactors)
             if estimator:
                 self.knownResultGranularity(record, estimator)
-        ### 遍历unknown_records,用UnknownEstimator计算energy_estimate等数值
-        ### 将每一条都转换为标准result格式，加入known_results字典列表
         for record in self.unknown_records:
             unknown_record_estimate = self.getEstimateForUnknownUsage(record)
-            # print(f'here{unknown_record_estimate.energy_estimate}')
             if unknown_record_estimate:
                 self.knownResultGranularity(record, unknown_record_estimate)
-        # for record in self.unsupported_records:
-        #     unsupported_record_estimate = self.getEstimateForUnknownUsage(record)
-        #     if unsupported_record_estimate:
-        #         self.knownResultGranularity(record, unsupported_record_estimate)          
+            
                 
     def knownResultGranularity(self, record:UsageRecord, estimator:IFootprintEstimate):
         if self.granularity == 'Day':
@@ -156,20 +141,9 @@ class DataProcessor:
         return containsAny(COMPUTE_STRING_FORMATS, usageType)
 
     def isMemoryUsage(self, usageType):
-        # ##### 调试
-        # print(" ")
-        # print(usageType)
-        # print(containsAny(MEMORY_USAGE_TYPES, usageType))
-        # print(containsAny(COMPUTE_STRING_FORMATS, usageType))
-        # ##### 
         return (containsAny(MEMORY_USAGE_TYPES, usageType) and (not containsAny(COMPUTE_STRING_FORMATS, usageType)))
     
     def isNetworkUsage(self, usageType):
-        # ##### 调试
-        # print(" ")
-        # print(usageType)
-        # print(containsAny(NETWORKING_STRING_FORMATS, usageType))
-        # #####
         return containsAny(NETWORKING_STRING_FORMATS, usageType)
 
     def getReplicationFactor(self, record:UsageRecord):
@@ -187,30 +161,10 @@ class DataProcessor:
 
     def getEstimateByUsageUnit(self, record:UsageRecord, emissionsFactors):
         powerUsageEffectiveness  = GcpFootprintEstimationConstant.get_pue(region = record.region)
-
-        ## 调试
-        # print("here0")
-        ## 
         if(record.usageUnit == 'seconds'):
-            # # 调试
-            # print("here1")
-            # # 
             if (self.isComputeUsage(record.usageType)): 
-                # # 调试
-                # print("here2")
-                # # 
                 computeFootprint = self.getComputeFootprintEstimate(record, powerUsageEffectiveness,emissionsFactors)
-                
-                # # 调试
-                # print(f'computeFootprint is : {computeFootprint.energy_estimate}') 
-                # #
-                
                 embodiedEmissions = self.getEmbodiedEmissions(record, emissionsFactors)
-                
-                # # 调试
-                # print(f'embodiedEmissions is : {embodiedEmissions.energy_estimate}') 
-                # #
-                
                 if(embodiedEmissions.co2_estimate):
                     computeAndEmbodiedEmissionsFootprintEstimate = IFootprintEstimate(
                         timestamp = record.groupByDay, 
@@ -235,9 +189,6 @@ class DataProcessor:
             else:
                 self.unknown_records.append(record)
         else:
-            ## 调试
-            # print("here4")
-            ## 
             print(f"Unsupported Usage unit:{record.usageUnit}, Unsupported Usage type:{record.usageType}")
     
     def getEstimateForUnknownUsage(self, record:UsageRecord):
@@ -290,15 +241,7 @@ class DataProcessor:
         gpuComputeProcessors = [processor for processor in GPU_MACHINE_TYPES if startsWith(usageType, processor)]
         return gpuComputeProcessors if gpuComputeProcessors else GPU_MACHINE_TYPES
 
-    def getComputeProcessorsFromMachineType(self, machineType):
-        
-        #### 调试用
-        # print(f"the type of SHARED_CORE_PROCESSORS: {type(SHARED_CORE_PROCESSORS)}" )
-        # print(f"the machineType: {record.machineType}") 
-        #### 
-        # sharedCoreMatch = (
-        #     machineType and next((core.value for core in SHARED_CORE_PROCESSORS if core.value in machineType), None)
-        # )  
+    def getComputeProcessorsFromMachineType(self, machineType): 
         sharedCoreMatch = None
         if machineType:
             for core in SHARED_CORE_PROCESSORS:
@@ -320,7 +263,6 @@ class DataProcessor:
         data = self.getDataFromMachineType(record.machineType)
         instancevCpu = data['instancevCpu']
         if (instancevCpu == 0):
-            # print(f"instancevCpu is 0 for machineType:{record.machineType}")
             embodied_zero_footprint_estimate = IFootprintEstimate(
                 timestamp = timestamp,  
                 energy_estimate = 0,
@@ -376,17 +318,6 @@ class DataProcessor:
     def getMemoryFootprintEstimate(self, record:UsageRecord, powerUsageEffectiveness, emissionsFactors):
         MemoryUsage = convertByteSecondsToGigabyteHours(record.usageAmount) 
         self.memoryestimator = MemoryEstimator(GcpFootprintEstimationConstant.GCP_CLOUD_CONSTANTS["MEMORY_COEFFICIENT"])
-        ## Comes from TEMPLATES: 
-        #   new ComputeEstimator(),
-        #   new StorageEstimator(GCP_CLOUD_CONSTANTS.SSDCOEFFICIENT),
-        #   new StorageEstimator(GCP_CLOUD_CONSTANTS.HDDCOEFFICIENT),
-        #   new NetworkingEstimator(GCP_CLOUD_CONSTANTS.NETWORKING_COEFFICIENT),
-        #   new MemoryEstimator(GCP_CLOUD_CONSTANTS.MEMORY_COEFFICIENT),
-        #   new UnknownEstimator(GCP_CLOUD_CONSTANTS.ESTIMATE_UNKNOWN_USAGE_BY),
-        #   new EmbodiedEmissionsEstimator(
-        #     GCP_CLOUD_CONSTANTS.SERVER_EXPECTED_LIFESPAN,
-        #   ),
-        #   new BigQuery(),
         memoryFootprint = self.memoryestimator.estimate(MemoryUsage, record, powerUsageEffectiveness, emissionsFactors)
         if(memoryFootprint):
             memoryFootprint.usesAverageCPUConstant = False
@@ -417,16 +348,3 @@ class DataProcessor:
             networkingFootprint.usesAverageCPUConstant = False
             accumulateKilowattsHours(self.unknown_dic, record, networkingFootprint.energy_estimate)
         return networkingFootprint
-    
-  
-
-    
-    # #调试用的函数        
-    # def print_processed_data(self):
-    #     converted_data = {
-    #         str(key): value for key, value in self.processed_data.items()
-    #     }
-    #     formatted_data = json.dumps(converted_data, default=str, indent=4)
-    #     print(formatted_data)
-   
-  

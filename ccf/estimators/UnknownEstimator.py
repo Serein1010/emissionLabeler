@@ -7,10 +7,8 @@ class UnknownEstimator(IFootprintEstimate):
     def __init__(self):
         pass 
     
-    def estimate(self, UnknownUsage, region, emissionsFactors, unknown_dic):
-       
-        estimatedKilowattHours = self.estimate_kilowatt_hours(UnknownUsage, unknown_dic)
-        
+    def estimate(self, UnknownUsage, region, emissionsFactors, unknown_dic):     
+        estimatedKilowattHours = self.estimate_kilowatt_hours(UnknownUsage, unknown_dic) 
         estimatedCO2Emissions = estimateCo2(estimatedKilowattHours, region, emissionsFactors)
         footprint_estimate = IFootprintEstimate(
             timestamp = UnknownUsage['timestamp'], 
@@ -19,7 +17,6 @@ class UnknownEstimator(IFootprintEstimate):
             region = region,
             usesAverageCPUConstant = False
         )
-
         return footprint_estimate
     
     def estimate_kilowatt_hours(self, UnknownUsage, unknown_dic) -> float:
@@ -36,16 +33,4 @@ class UnknownEstimator(IFootprintEstimate):
                 return ((serviceAndUsageUnit['kilowattHours'] /
                             serviceAndUsageUnit['UsageAmount']) *
                             UnknownUsage['usageAmount'])
-
-
         return 0
-
-    # def estimate_kilowatt_hours(record:UsageRecord, kilowattHoursByServiceAndUsageUnit, replicationFactor):
-    #     timestamp = record.groupByDay
-    #     usageAmount = record.usageAmount
-    #     usageUnit = record.usageUnit
-    #     usageType = record.usageType
-        
-    #     serviceAndUsageUnit  = kilowattHoursByServiceAndUsageUnit[]
-
-        

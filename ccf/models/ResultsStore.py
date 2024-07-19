@@ -24,14 +24,12 @@ class ResultsStore:
             'cost': record.cost,
         }
         return result
-
     
     def add_result(self, record:UsageRecord, footprint_estimate:IFootprintEstimate):
         if self.granularity == 'Day':
             timestamp = record.groupByDay
         elif self.granularity == 'Hour':
             timestamp = record.usage_start_time
-        
         result = {
             'cloudProvider': "GCP",
             'kilowattHours': footprint_estimate.energy_estimate,
@@ -43,15 +41,12 @@ class ResultsStore:
             'region': record.region,
             'cost': record.cost,
         }
-
         self.dataset[timestamp].append(result)
-
         aggregated_result = {
             'timestamp': timestamp,
             'serviceEstimates': self.dataset[timestamp],
             'groupBy': self.granularity.lower(),
         }
-
         return aggregated_result
 
     def get_results(self):

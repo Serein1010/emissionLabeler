@@ -15,22 +15,13 @@ class ComputeEstimator(IFootprintEstimate):
         pass 
     
     def estimate(self, computeUsage, record:UsageRecord,  emissionsFactors, computeConstants):
-        # ###  调试专用
-        # print(f"cpuUtilizationAverage type: {type(computeUsage['cpuUtilizationAverage'])}")
-        # print(f"vCpuHours type: {type(computeUsage['vCpuHours'])}")
-        # print(f"minWatts type: {type(computeConstants['minWatts'])}")
-        # print(f"maxWatts type: {type(computeConstants['maxWatts'])}")
-        # print(f"powerUsageEffectiveness type: {type(computeConstants['powerUsageEffectiveness'])}")
-        # print(f"averageWatts type: {type(computeConstants['averageWatts'])}")
-        # print(f"replicationFactor type: {type(computeConstants['replicationFactor'])}")
-        # ### 
         estimatedKilowattHours = ENERGY_ESTIMATION_FORMULA(
             computeUsage['cpuUtilizationAverage'],
             computeUsage['vCpuHours'],
             computeConstants['minWatts'],
             computeConstants['maxWatts'],
             computeConstants['powerUsageEffectiveness'],
-            computeConstants['averageWatts'],  #为将来留出接口，如果知道averageWatts再代入
+            computeConstants['averageWatts'],  
             computeConstants['replicationFactor'],
         )
         estimatedCO2Emissions = estimateCo2(estimatedKilowattHours,record.region, emissionsFactors)

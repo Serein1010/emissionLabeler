@@ -8,21 +8,10 @@ class SHARED_CORE_PROCESSORS(Enum):
     G1_SMALL = 'g1-small'
 
 if __name__ == "__main__":
-    # for core in SHARED_CORE_PROCESSORS(): 
-    #     print(core)
-
     print(type(SHARED_CORE_PROCESSORS))
     for res in SHARED_CORE_PROCESSORS:
         print(res)
         print(res.value)
-
-# SHARED_CORE_PROCESSORS = {
-#     E2_MICRO = 'e2-micro',
-#     E2_SMALL = 'e2-small',
-#     E2_MEDIUM = 'e2-medium',
-#     F1_MICRO = 'f1-micro',
-#     G1_SMALL = 'g1-small',
-# }
 
 SHARED_CORE_PROCESSORS_BASELINE_UTILIZATION = {
     SHARED_CORE_PROCESSORS.E2_MICRO: 25,

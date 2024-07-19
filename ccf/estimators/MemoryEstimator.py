@@ -15,11 +15,8 @@ class MemoryEstimator(IFootprintEstimate):
             region = record.region,
             usesAverageCPUConstant = False
         )
-
         return footprint_estimate
     
-
-
     def estimate_kilowatt_hours(self, MemoryUsage, powerUsageEffectiveness, replicationFactor = 1) -> float:
        
         return MemoryUsage * self.coefficient * powerUsageEffectiveness * replicationFactor

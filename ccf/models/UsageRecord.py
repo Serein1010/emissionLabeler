@@ -6,10 +6,6 @@ from utils.MachineTypes import SHARED_CORE_PROCESSORS
 from api import config
 class UsageRecord:
     def __init__(self, data):
-        self.cloudProvider = "GCP"
-        self.billing_account_id = data["billing_account_id"]
-        self.serviceName = data["service"]["description"]
-
         if "id" in data["project"]:
             self.accountId = data["project"]["id"]
         else:
@@ -18,19 +14,6 @@ class UsageRecord:
             self.accountName = data["project"]["name"]
         else:
             self.accountName = "UNKNOWN"   
-
-        
-        # location setting
-        # if "location" in data["location"]:
-        #     self.location = data["location"]["location"]
-        # else:
-        #     self.location = "UNKNOWN"
-
-        # if "country" in data["location"]:
-        #     self.country = data["location"]["country"]
-        # else:
-        #     self.country = "UNKNOWN"
-        
         if "region" in data["location"]:
             self.region = data["location"]["region"]
         else:
@@ -39,24 +22,25 @@ class UsageRecord:
             else:
                 self.region = "UNKNOWN"
 
+        self.cloudProvider = "GCP"
+        self.billing_account_id = data["billing_account_id"]
+        self.serviceName = data["service"]["description"]
         self.usage_start_time = datetime.strptime(data["usage_start_time"], "%Y-%m-%d %H:%M:%S UTC")
         self.usage_end_time = datetime.strptime(data["usage_end_time"], "%Y-%m-%d %H:%M:%S UTC")
         self.groupByDay = self.usage_start_time.date()
-
-
         self.cost = data["cost"]
-
+        self.usageAmount = data["usage"]["amount"]
+        self.usageUnit = data["usage"]["unit"]
+        self.usageType= data["sku"]["description"]
+        self.vCpuHours = self.getVCpuHours()
+        self.gpuHours = self.usageAmount / 3600
+        self.machineType = self.extract_machine_type(data["system_labels"])
 
         if "cost_at_list" in data:
             self.costAtList = data["cost_at_list"]
         else:
-            self.costAtList = "UNKNOWN"
+            self.costAtList = "UNKNOWN" 
 
-        # self.costAtList = data["cost_at_list"]    
-        self.usageAmount = data["usage"]["amount"]
-        self.usageUnit = data["usage"]["unit"]
-        self.usageType= data["sku"]["description"]
-        
         if "effective_price" in data["price"]:
             self.priceEffectivePrice = data["price"]["effective_price"]
         else:
@@ -66,10 +50,6 @@ class UsageRecord:
             self.priceUnit = data["price"]["unit"]
         else:
             self.priceUnit ="UNKNOWN"
-            
-        self.vCpuHours = self.getVCpuHours()
-        self.gpuHours = self.usageAmount / 3600
-        self.machineType = self.extract_machine_type(data["system_labels"])
 
         if containsAny(SERVICES_TO_OVERRIDE_USAGE_UNIT_AS_UNKNOWN, self.serviceName):
             self.usageUnit = 'UNKNOWN'

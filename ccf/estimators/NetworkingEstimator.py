@@ -8,15 +8,8 @@ class NetworkingEstimator(IFootprintEstimate):
         self.coefficient = coefficient
 
     def estimate(self, NetworkingUsage, record:UsageRecord, powerUsageEffectiveness, emissionsFactors):
-
         estimatedKilowattHours = self.estimate_kilowatt_hours(NetworkingUsage, powerUsageEffectiveness)
-        
-        # ###  调试专用
-        # print(f"Record Region type: {type(record.region)}")
-        # ###
-
-        estimatedCO2Emissions = estimateCo2(estimatedKilowattHours,record.region, emissionsFactors)
-        
+        estimatedCO2Emissions = estimateCo2(estimatedKilowattHours,record.region, emissionsFactors)   
         footprint_estimate = IFootprintEstimate(
             timestamp = record.groupByDay,  
             energy_estimate = estimatedKilowattHours,
@@ -24,13 +17,9 @@ class NetworkingEstimator(IFootprintEstimate):
             region = record.region,
             usesAverageCPUConstant = False
         )
-
         return footprint_estimate
     
-
-
-    def estimate_kilowatt_hours(self, NetworkingUsage, powerUsageEffectiveness) -> float:
-       
+    def estimate_kilowatt_hours(self, NetworkingUsage, powerUsageEffectiveness) -> float:   
         return NetworkingUsage * self.coefficient * powerUsageEffectiveness
 
 
