@@ -64,10 +64,12 @@ To run the project, follow these steps:
 `pip install -r requirements.txt`
 3. Configure the input and output file paths(possibly with the ElectricityMapToken) in api/config.py
 4. Run the main script
-`python3 main.py`
+`python3 ccf/main.py`
 5. The processed data will be written to the output file specified in the configuration
 
 ## Configuration
 `INPUT_FILE_PATH`: Path to the JSON file containing the GCP usage data.
+
 `OUTPUT_FILE_PATH`: Path where the processed output JSON file will be saved.
+
 `ELECTRICITY_MAP_TOKEN`: API token for accessing electricity map data for emissions factors. If not provided, the project will use static emissions factors.
