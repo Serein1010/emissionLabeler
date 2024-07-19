@@ -1,20 +1,17 @@
 
-
 # Methodology
 
-### CO2e Estimates
-Total CO2e = Operational Emissions + Embodied Emissions
+## CO2e Estimates
 
-Operational Emissions = (Cloud provider service usage) x (Cloud energy conversion factors [kWh]) x (Cloud provider Power Usage Effectiveness (PUE)) x (grid emissions factors [metric tons CO2e])
+**Total CO2e = Operational Emissions + Embodied Emissions**
 
-Embodied Emissions = estimated metric tons CO2e emissions from the manufacturing of datacenter servers, for compute usage.
+- **Operational Emissions = (Cloud provider service usage) x (Cloud energy conversion factors [kWh]) x (Cloud provider Power Usage Effectiveness (PUE)) x (grid emissions factors [metric tons CO2e])**
+- **Embodied Emissions = estimated metric tons CO2e emissions from the manufacturing of datacenter servers, for compute usage.**
 
-- **The introductions of the four factors needed for counting operational emissions can be found [here].**
-- **There is one paragraph telling about the embodied emissions, which can be found [here].**
+## Operational Emissions
 
-### Operational Emissions
+### Cloud Provider Service Usage
 
-#### Cloud Provider Service Usage
 Since Voormedia deploys most of the projects on Google Cloud, we use BigQuery to get GCP Billing Export Table, and the estimation is built on top of the GCP billing results.
 
 One usage record example:
@@ -89,7 +86,8 @@ One usage record example:
 }
 ```
 
-#### Cloud Provider Power Usage Effectiveness (PUE)
+### Cloud Provider Power Usage Effectiveness (PUE)
+
 We use a dictionary `GCP_CLOUD_CONSTANTS` to store all the cloud constants that might be useful for calculating. You can find it in `~/.../utils/GcpFootprintEstimationConstant.py`.
 
 ```python
@@ -106,7 +104,8 @@ We use a dictionary `GCP_CLOUD_CONSTANTS` to store all the cloud constants that 
 },
 ```
 
-#### Grid Emissions Factors
+### Grid Emissions Factors
+
 The related codes are in `~/.../emissions/getEmissionsFactors.py`. Two modes to get the emission factor:
 
 1. If you have the token for the ElectricityMap API, the emission labeler will use the API to get the emissions factors in 24 hours. The token can be set in `~/.../api/config.py`.
@@ -133,9 +132,7 @@ The related codes are in `~/.../emissions/getEmissionsFactors.py`. Two modes to 
 'ASIA_SOUTHEAST1': 0.00035712,
 'ASIA_SOUTHEAST2': 0.0005046,
 'AUSTRALIA_SOUTHEAST1': 0.00047242,
-'AUSTRALIA
-
-_SOUTHEAST2': 0.00035949,
+'AUSTRALIA_SOUTHEAST2': 0.00035949,
 'EUROPE_CENTRAL2': 0.0004608,
 'EUROPE_NORTH1': 0.00001143,
 'EUROPE_SOUTHWEST1': 0.000121,
@@ -159,29 +156,32 @@ _SOUTHEAST2': 0.00035949,
 'UNKNOWN': 0.0002152373529,  # Average across all regions (excluding multi and dual regions)
 ```
 
-#### Cloud Energy Conversion Factors
+### Cloud Energy Conversion Factors
+
 The billing data record's usage amount has different units (bytes, seconds, gigabyte-months, etc.).
 
 The cloud energy conversion factor can translate usage amount into electricity consumption (unit in kWh).
 
 So we need different algorithms to calculate the factor. The logic of this part is stored in `~/.../data_processor.py`.
 
-##### Usage Type Classification
+#### Usage Type Classification
+
 For each record, we first classify it.
 
-###### Rough Classification
+##### Rough Classification
 
-| Unit        | Classification   |
-|-------------|------------------|
-| hours or seconds | Compute |
+| Unit                 | Classification   |
+|----------------------|------------------|
+| hours or seconds     | Compute          |
 | byte-seconds or gigabyte-months | Storage |
-| bytes or gigabytes | Networking |
-| Others | Ignored |
+| bytes or gigabytes   | Networking       |
+| Others               | Ignored          |
 
-###### Detailed Classification
+##### Detailed Classification
+
 Please check `~/.../utils/UsageTypeConstants.py` and [Detailed Classification](https://docs.google.com/spreadsheets/d/1vhZNiOvkFH3oKcTV4wkjtw5KKfTFCuSBznEZGRRBdKM/edit?usp=sharing).
 
-###### Calculation for Each Usage Type
+##### Calculation for Each Usage Type
 
 - **Compute (CPU)**
   
@@ -194,7 +194,9 @@ Please check `~/.../utils/UsageTypeConstants.py` and [Detailed Classification](h
   |-----------------------|-----------------------------------------------------------|
   | Min Watts             | from SPECPower, or using GCP average                      |
   | Max Watts             | from SPECPower, or using GCP average                      |
-  | Avg vCPU Utilization  | from GCP APIs or use constant 50%                         |
+ 
+
+ | Avg vCPU Utilization  | from GCP APIs or use constant 50%                         |
   | vCPU Hours            | from cloud usage APIs or billing data                     |
 
   - The Min Watts/Max Watts is dependent on the CPU processor used by the Cloud provider to host the virtual machines. Based on publicly available information about which CPUs cloud providers use, we looked up the [SPECPower](https://www.spec.org/power_ssj2008/results/power_ssj2008.html) database to determine this constant per processor micro-architecture.
@@ -256,7 +258,8 @@ Kilowatt hours = Memory usage (GB-Hours) x Memory coefficient
 
 Overestimation exists because of the overlapping with Computing estimation using SPEC.
 
-### Embodied Emissions
+## Embodied Emissions
+
 We leverage this formula provided by the [Software Carbon Intensity (SCI)](https://github.com/Green-Software-Foundation/sci) standard:
 
 `M = TE * (TR/EL) * (RR/TR)`
@@ -265,9 +268,7 @@ Where:
 
 - `TE = Total Embodied Emissions, the sum of Life Cycle Assessment (LCA) emissions for all hardware components`
 - `TR = Time Reserved, the length of time the hardware is reserved for use by the software`
-- `EL = Expected Lif
-
-espan, the anticipated time that the equipment will be installed`
+- `EL = Expected Lifespan, the anticipated time that the equipment will be installed`
 - `RR = Resources Reserved, the number of resources reserved for use by the software`
 - `TR = Total Resources, the total number of resources available`
 
@@ -284,9 +285,3 @@ For the resource ratio (RR), we used the number of vCPUs for the given instance.
 For the total resources (TR), we used the largest instance vCPUs within the given family. For burstable or Shared-Core families in AWS, we used the largest instance in the closest family, as this approach is more accurate than using the largest in the burstable/Shared-Core families. For Azure Constrained vCPUs capable instances, we used the underlying vCPUs of each instance as the largest vCPU, based on our interpretation of their documentation.
 
 Currently, we only include Embodied Emissions for Compute usage types for all supported cloud providers. However, we welcome contributions to apply embodied emissions to other types of cloud usage.
-
-
-
-
-
-
