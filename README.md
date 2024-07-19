@@ -1,6 +1,6 @@
 # GCP Emissions Estimator
 
-This project is designed to estimate the carbon emissions associated with the usage of various Google Cloud Platform (GCP) services. The tool processes GCP usage data, calculates the corresponding energy consumption and CO2 emissions, and outputs the results in a structured JSON format.
+This project is designed to estimate the carbon emissions associated with the usage of various Google Cloud Platform (GCP) services. The tool processes GCP usage data, calculates the corresponding energy consumption and CO2 emissions, and outputs the results in a structured JSON format. 
 
 ## Table of Contents
 
@@ -53,6 +53,7 @@ The GCP Emissions Estimator is a tool that helps users understand the environmen
 ├── Methodology.md
 ├── BillingDataExport.md
 └── README.md
+```
 
 ## Installation
 
