@@ -62,13 +62,15 @@ The GCP Emissions Estimator is a tool that helps users understand the environmen
 
 To run the project, follow these steps:
 
-1. Clone the repository
+1. Clone the repository, make sure your PC works with Python, Python 3.8.10 is recommended
+1. Clone the repository, make sure your PC works with Python, Python 3.8.10 is recommended
+1. Clone the repository, make sure your PC works with Python, Python 3.8.10 is recommended
 2. Install the required dependencies
 `pip install -r requirements.txt`
-3. Configure the input and output file paths(possibly with the ElectricityMapToken) in api/config.py
-4. Run the main script
+1. Configure the input and output file paths(possibly with the ElectricityMapToken) in api/config.py
+2. Run the main script
 `python3 ccf/main.py`
-5. The processed data will be written to the output file specified in the configuration
+1. The processed data will be written to the output file specified in the configuration
 
 ## Configuration
 `INPUT_FILE_PATH`: Path to the JSON file containing the GCP usage data.
