@@ -27,32 +27,35 @@ The GCP Emissions Estimator is a tool that helps users understand the environmen
 ## Project Structure
 ```plaintext
 .
-├── main.py
-├── data_processor.py
-├── models/
-│   ├── UsageRecord.py
-│   ├── IFootprintEstimate.py
-│   └── ResultStore.py
-├── emissions/
-│   └── getEmissionsFactors.py
-├── estimators/
-│   ├── ComputeEstimator.py
-│   ├── EmbodiedEmissionsEstimator.py
-│   ├── MemoryEstimator.py
-│   ├── NetworkingEstimator.py
-│   └── StorageEstimator.py
-├── utils/
-│   ├── GCPRegions.py
-│   ├── helpers.py
-│   ├── MachineTypes.py
-│   ├── ReplicationFactors.py
-│   ├── UnitConversion.py
-│   └── UsageTypeConstants.py
-├── api/
-│   └── config.py
 ├── Methodology.md
 ├── BillingDataExport.md
-└── README.md
+├── README.md
+├── requirements.txt
+├── .gitignore
+├── ccf/
+│   ├── main.py
+│   ├── data_processor.py
+│   ├── models/
+│   │   ├── UsageRecord.py
+│   │   ├── IFootprintEstimate.py
+│   │   └── ResultStore.py
+│   ├── emissions/
+│   │   └── getEmissionsFactors.py
+│   ├── estimators/
+│   │   ├── ComputeEstimator.py
+│   │   ├── EmbodiedEmissionsEstimator.py
+│   │   ├── MemoryEstimator.py
+│   │   ├── NetworkingEstimator.py
+│   │   └── StorageEstimator.py
+│   ├── utils/
+│   │   ├── GCPRegions.py
+│   │   ├── helpers.py
+│   │   ├── MachineTypes.py
+│   │   ├── ReplicationFactors.py
+│   │   ├── UnitConversion.py
+│   │   └── UsageTypeConstants.py
+│   ├── api/
+│   │   └── config.py
 ```
 
 ## Installation
