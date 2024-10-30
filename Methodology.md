@@ -6,7 +6,6 @@
 **Total CO2e = Operational Emissions + Embodied Emissions**
 
 - **Operational Emissions = (Cloud provider service usage) x (Cloud energy conversion factors [kWh]) x (Cloud provider Power Usage Effectiveness (PUE)) x (grid emissions factors [metric tons CO2e])**
-- **Embodied Emissions = estimated metric tons CO2e emissions from the manufacturing of datacenter servers, for compute usage.**
 
 ## Operational Emissions
 
@@ -220,16 +219,12 @@ Please check `~/.../utils/UsageTypeConstants.py` and [Detailed Classification](h
   - **HDD**
     
     ```
-    HDD average capacity in 2020 = 10 Terabytes per disk
-    Average wattage per disk for 2020 = 6.5 Watts per disk
-    Watts per Terabyte = Watts per disk / Terabytes per disk: 6.5 W / 10 TB = 0.65 Watt-Hours per Terabyte-Hour for HDD
+    Watts per Terabyte = 2.14 Watt-Hours per Terabyte-Hour for HDD
     ```
   - **SSD**
     
     ```
-    SSD average capacity in 2020 = 5 Terabytes per disk
-    Average wattage per disk for 2020 = 6 Watts per disk
-    Watts per Terabyte = Watts per disk / Terabytes per disk: 6 W / 5 TB = 1.2 Watt-Hours per Terabyte-Hour for SSD
+    Watts per Terabyte = Watts per disk / Terabytes per disk: 4.35 Watt-Hours per Terabyte-Hour for SSD
     ```
   - **Replication Factors**
     Most cloud providers automatically replicate the data that users stored on cloud to achieve better data availability and durability. So the actual storage size might be multiple times more than the allocated storage sizes that users think they need. The replication factors are used to take this into account in our estimations. It is applied to the total energy and CO2 estimate for each storage or database service. Check [Replication Factors Form](https://docs.google.com/spreadsheets/d/1vhZNiOvkFH3oKcTV4wkjtw5KKfTFCuSBznEZGRRBdKM/edit?gid=1539529180#gid=1539529180) for more details.
@@ -248,38 +243,9 @@ Please check `~/.../utils/UsageTypeConstants.py` and [Detailed Classification](h
   We can confidently assume that hyper-scale cloud providers maintain highly energy-efficient networks between their data centers, utilizing their own optical fiber networks and submarine cables. Data exchanges between these centers occur at very high bitrates (~100 GbE, or 100 Gbps), representing the most efficient use case. Based on these assumptions, we have chosen to use the smallest available coefficient: 0.001 kWh/Gb. We invite feedback and contributions to further refine this coefficient.
 
 - **Memory**
-  - Crucial: 0.375 W/GB
-  - Micron: 0.4083 W/GB
-  - Average: 0.392 W/GB, 0.000392 Kilowatt Hour / Gigabyte Hour.
+  - 0.625 W/GB, 0.000625 Kilowatt Hour / Gigabyte Hour.
 
 Kilowatt hours = Memory usage (GB-Hours) x Memory coefficient
 
 Overestimation exists because of the overlapping with Computing estimation using SPEC.
 
-## Embodied Emissions
-
-We leverage this formula provided by the [Software Carbon Intensity (SCI)](https://github.com/Green-Software-Foundation/sci) standard:
-
-`M = TE * (TR/EL) * (RR/TR)`
-
-Where:
-
-- `TE = Total Embodied Emissions, the sum of Life Cycle Assessment (LCA) emissions for all hardware components`
-- `TR = Time Reserved, the length of time the hardware is reserved for use by the software`
-- `EL = Expected Lifespan, the anticipated time that the equipment will be installed`
-- `RR = Resources Reserved, the number of resources reserved for use by the software`
-- `TR = Total Resources, the total number of resources available`
-
-`(scopeThreeEmissions * (usageTimePeriod / self.serverExpectedLifespan) * (instancevCpu / largestInstancevCpu)`
-
-We want to determine the total embodied (TE) emissions for each specified hardware per cloud provider. For Google Cloud Platform (GCP), we calculated the total embodied emissions based on the underlying microarchitecture(s) that could be used for a given instance or machine type. The embodied emissions data is published in this [spreadsheet](https://docs.google.com/spreadsheets/d/1k-6JtneEu4E9pXQ9QMCXAfyntNJl8MnV2YzO4aKHh-0/edit), and we utilize the Cloud Carbon Footprint ccf-coefficients repository for the most up-to-date embodied emissions data for each cloud provider.
-
-For the time reserved (TR), we used the duration a given compute instance was running.
-
-For the expected lifespan (EL), we used 4 years, based on the Dell PowerEdge R740 Full Life Cycle Assessment.
-
-For the resource ratio (RR), we used the number of vCPUs for the given instance.
-
-For the total resources (TR), we used the largest instance vCPUs within the given family. For burstable or Shared-Core families in AWS, we used the largest instance in the closest family, as this approach is more accurate than using the largest in the burstable/Shared-Core families. For Azure Constrained vCPUs capable instances, we used the underlying vCPUs of each instance as the largest vCPU, based on our interpretation of their documentation.
-
-Currently, we only include Embodied Emissions for Compute usage types for all supported cloud providers. However, we welcome contributions to apply embodied emissions to other types of cloud usage.
