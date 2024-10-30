@@ -194,9 +194,7 @@ Please check `~/.../utils/UsageTypeConstants.py` and [Detailed Classification](h
   |-----------------------|-----------------------------------------------------------|
   | Min Watts             | from SPECPower, or using GCP average                      |
   | Max Watts             | from SPECPower, or using GCP average                      |
- 
-
- | Avg vCPU Utilization  | from GCP APIs or use constant 50%                         |
+  | Avg vCPU Utilization  | from GCP APIs or use constant 50%                         |
   | vCPU Hours            | from cloud usage APIs or billing data                     |
 
   - The Min Watts/Max Watts is dependent on the CPU processor used by the Cloud provider to host the virtual machines. Based on publicly available information about which CPUs cloud providers use, we looked up the [SPECPower](https://www.spec.org/power_ssj2008/results/power_ssj2008.html) database to determine this constant per processor micro-architecture.
